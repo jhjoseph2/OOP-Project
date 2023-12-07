@@ -17,6 +17,7 @@ public class MainGUI extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Smart Todo List Application");
         initWidgets();
+        setPreferredSize(new Dimension(300, 200));
         pack();
         setLocationRelativeTo(null);
     }
@@ -39,9 +40,14 @@ public class MainGUI extends JFrame {
             }
         });
 
-        setLayout(new FlowLayout());
-        add(addNewTaskButton);
-        add(browseAllTasksButton);
+        setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(10, 10, 10, 10);
+
+        add(addNewTaskButton, gbc);
+        add(browseAllTasksButton, gbc);
     }
 
     private void onAddNewTask() {
