@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -111,10 +112,18 @@ public class AddNewTaskGUI extends JFrame {
         Category category = (Category) categoryComboBox.getSelectedItem();
 
         // Parse the due date
-        Date dueDate = null;
+        Date dueDate;
         try {
             dueDate = new SimpleDateFormat("yyyy-MM-dd").parse(dueDateString);
-        } catch (Exception ex) {
+
+            // Check if the due date is later than today
+            Date today = new Date();
+            if (dueDate.before(today)) {
+                JOptionPane.showMessageDialog(this, "The due date must be later than today.",
+                        "Invalid Due Date", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        } catch (ParseException ex) {
             JOptionPane.showMessageDialog(this, "Please enter a valid due date in the format yyyy-MM-dd.",
                     "Invalid Date Format", JOptionPane.ERROR_MESSAGE);
             return;
@@ -126,13 +135,13 @@ public class AddNewTaskGUI extends JFrame {
         // Add the new task to the task list
         taskList.addTask(newTask);
 
-
-         clearFields();
-         dispose();
+        clearFields();
+        dispose();
 
         // Inform the user that the task was saved
         JOptionPane.showMessageDialog(this, "Task saved successfully.", "Task Saved", JOptionPane.INFORMATION_MESSAGE);
     }
+
 
     private void clearFields() {
         titleField.setText("");

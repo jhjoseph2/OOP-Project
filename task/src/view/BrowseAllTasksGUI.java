@@ -40,16 +40,14 @@ public class BrowseAllTasksGUI extends JFrame {
         populateTableWithTasks();
 
         // Search Panel
-        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-//        searchPanel.add(new JLabel("Search Task ID:"));
-//        searchPanel.add(searchTextField);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonPanel.add(selectTaskButton);
+        buttonPanel.add(backButton);
 
         // Set up layout and add components
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
-//        add(searchPanel);
         add(new JScrollPane(taskTable));
-        add(selectTaskButton);
-        add(backButton);
+        add(buttonPanel);
 
         // Action listener for the select button
         selectTaskButton.addActionListener(new ActionListener() {
