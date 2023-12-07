@@ -1,3 +1,8 @@
+package model;
+
+import model.Category;
+import model.CategoryList;
+
 import java.util.Date;
 
 public class Task {

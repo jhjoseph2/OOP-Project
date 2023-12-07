@@ -1,3 +1,7 @@
+package model;
+
+import model.TaskList;
+
 public class User {
     private int userID;
     private String username;

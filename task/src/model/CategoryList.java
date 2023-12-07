@@ -1,3 +1,5 @@
+package model;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +15,9 @@ public class CategoryList {
     public static CategoryList getInstance() {
         if (instance == null) {
             instance = new CategoryList();
+            addCategory("work");
+            addCategory("life");
+            addCategory("study");
         }
         return instance;
     }

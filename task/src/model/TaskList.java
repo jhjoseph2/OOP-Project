@@ -1,3 +1,7 @@
+package model;
+
+import model.Task;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,5 +33,18 @@ public class TaskList {
         return tasks.stream()
                 .filter(task -> task.getPriority().equals(priority))
                 .collect(Collectors.toList());
+    }
+
+    public Task getTaskById(String taskId) {
+        for (Task task : tasks) {
+            if (task.getTaskID() == Integer.parseInt(taskId)) {
+                return task;
+            }
+        }
+        return null; // Return null if no task is found with the given ID
+    }
+
+    public List<Task> getTasks() {
+        return tasks;
     }
 }
