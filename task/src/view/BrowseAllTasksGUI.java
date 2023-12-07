@@ -15,6 +15,7 @@ public class BrowseAllTasksGUI extends JFrame {
     private JTextField searchTextField;
     private JButton selectTaskButton;
     private JButton backButton;
+    private JButton toggleCompleteButton;
 
     private TaskList taskList;
     private DefaultTableModel tableModel;
@@ -30,8 +31,9 @@ public class BrowseAllTasksGUI extends JFrame {
     private void initWidgets() {
 //        searchTextField = new JTextField(20);
         taskTable = new JTable();
-        selectTaskButton = new JButton("Select Task");
+        selectTaskButton = new JButton("Edit Task");
         backButton = new JButton("Back");
+        toggleCompleteButton = new JButton("Toggle Complete");
 
         // Table setup
         String[] columnNames = {"ID", "Title", "Description", "Due Date", "Priority", "Category", "Status"};
@@ -40,9 +42,11 @@ public class BrowseAllTasksGUI extends JFrame {
         populateTableWithTasks();
 
         // Search Panel
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 3, 10, 0)); // Changed to GridLayout
         buttonPanel.add(selectTaskButton);
+        buttonPanel.add(toggleCompleteButton);
         buttonPanel.add(backButton);
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // Set up layout and add components
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
@@ -59,6 +63,27 @@ public class BrowseAllTasksGUI extends JFrame {
                     Task selectedTask = taskList.getTaskById(taskId); // Assuming getTaskById method exists
                     if (selectedTask != null) {
                         new TaskDetailGUI(selectedTask).setVisible(true);
+                    } else {
+                        JOptionPane.showMessageDialog(BrowseAllTasksGUI.this, "Task not found.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(BrowseAllTasksGUI.this, "Please select a task first.", "No Task Selected", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
+
+        // Action listener for the toggle complete button
+        toggleCompleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = taskTable.getSelectedRow();
+                if (selectedRow >= 0) {
+                    String taskId = taskTable.getValueAt(selectedRow, 0).toString(); // Assuming the ID is in the first column
+                    Task selectedTask = taskList.getTaskById(taskId); // Assuming getTaskById method exists
+                    if (selectedTask != null) {
+                        selectedTask.toggleStatus(); // Call the toggleStatus method on the task
+                        // Optionally, update the table row to reflect the new status
+                        tableModel.setValueAt(selectedTask.getStatus(), selectedRow, 6); // Assuming you know the column index of the status
                     } else {
                         JOptionPane.showMessageDialog(BrowseAllTasksGUI.this, "Task not found.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
