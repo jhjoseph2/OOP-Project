@@ -15,9 +15,9 @@ public class CategoryList {
     public static CategoryList getInstance() {
         if (instance == null) {
             instance = new CategoryList();
-            addCategory("work");
-            addCategory("life");
-            addCategory("study");
+            addCategory("Work");
+            addCategory("Life");
+            addCategory("Study");
         }
         return instance;
     }
