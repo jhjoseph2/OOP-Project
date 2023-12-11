@@ -9,6 +9,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
 
 public class BrowseAllTasksGUI extends JFrame {
     private JTable taskTable;
@@ -17,11 +20,23 @@ public class BrowseAllTasksGUI extends JFrame {
     private JButton backButton;
     private JButton toggleCompleteButton;
 
+    private JButton deleteButton;
     private TaskList taskList;
     private DefaultTableModel tableModel;
 
+
+
     public BrowseAllTasksGUI(TaskList taskList) {
         this.taskList = taskList;
+        Collections.sort(this.taskList.getTasks(), (a, b) -> {
+            if(a.getDueDate().before(b.getDueDate())){
+                return -1;
+            }else if(a.getDueDate().after(b.getDueDate())){
+                return 1;
+            }else{
+                return 0;
+            }
+        });
         setTitle("Browse All Tasks");
         initWidgets();
         pack();
@@ -34,7 +49,7 @@ public class BrowseAllTasksGUI extends JFrame {
         selectTaskButton = new JButton("Edit Task");
         backButton = new JButton("Back");
         toggleCompleteButton = new JButton("Toggle Complete");
-
+        deleteButton = new JButton("Delete");
         // Table setup
         String[] columnNames = {"ID", "Title", "Description", "Due Date", "Priority", "Category", "Status"};
         tableModel = new DefaultTableModel(columnNames, 0);
@@ -45,6 +60,7 @@ public class BrowseAllTasksGUI extends JFrame {
         JPanel buttonPanel = new JPanel(new GridLayout(1, 3, 10, 0)); // Changed to GridLayout
         buttonPanel.add(selectTaskButton);
         buttonPanel.add(toggleCompleteButton);
+        buttonPanel.add(deleteButton);
         buttonPanel.add(backButton);
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
@@ -86,6 +102,30 @@ public class BrowseAllTasksGUI extends JFrame {
                         tableModel.setValueAt(selectedTask.getStatus(), selectedRow, 6); // Assuming you know the column index of the status
                     } else {
                         JOptionPane.showMessageDialog(BrowseAllTasksGUI.this, "Task not found.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(BrowseAllTasksGUI.this, "Please select a task first.", "No Task Selected", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
+        deleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = taskTable.getSelectedRow();
+                if (selectedRow >= 0) {
+                    // Confirm before deleting
+                    int confirm = JOptionPane.showConfirmDialog(
+                            BrowseAllTasksGUI.this,
+                            "Are you sure you want to delete this task?",
+                            "Confirm Deletion",
+                            JOptionPane.YES_NO_OPTION
+                    );
+
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        String taskId = taskTable.getValueAt(selectedRow, 0).toString(); // Assuming the ID is in the first column
+                        Task deleteTask = taskList.getTaskById(taskId);
+                        taskList.removeTask(deleteTask);
+                        tableModel.removeRow(selectedRow); // Remove the row from the table model
                     }
                 } else {
                     JOptionPane.showMessageDialog(BrowseAllTasksGUI.this, "Please select a task first.", "No Task Selected", JOptionPane.WARNING_MESSAGE);
