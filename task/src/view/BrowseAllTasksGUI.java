@@ -25,15 +25,14 @@ public class BrowseAllTasksGUI extends JFrame {
     private DefaultTableModel tableModel;
 
 
-
     public BrowseAllTasksGUI(TaskList taskList) {
         this.taskList = taskList;
-        Collections.sort(this.taskList.getTasks(), (a, b) -> {
-            if(a.getDueDate().before(b.getDueDate())){
+        this.taskList.getTasks().sort((a, b) -> {
+            if (a.getDueDate().before(b.getDueDate())) {
                 return -1;
-            }else if(a.getDueDate().after(b.getDueDate())){
+            } else if (a.getDueDate().after(b.getDueDate())) {
                 return 1;
-            }else{
+            } else {
                 return 0;
             }
         });
@@ -54,10 +53,10 @@ public class BrowseAllTasksGUI extends JFrame {
         String[] columnNames = {"ID", "Title", "Description", "Due Date", "Priority", "Category", "Status"};
         tableModel = new DefaultTableModel(columnNames, 0);
         taskTable.setModel(tableModel);
-        populateTableWithTasks();
+        showAllTasks();
 
         // Search Panel
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 3, 10, 0)); // Changed to GridLayout
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 3, 10, 0));
         buttonPanel.add(selectTaskButton);
         buttonPanel.add(toggleCompleteButton);
         buttonPanel.add(deleteButton);
@@ -73,18 +72,7 @@ public class BrowseAllTasksGUI extends JFrame {
         selectTaskButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int selectedRow = taskTable.getSelectedRow();
-                if (selectedRow >= 0) {
-                    String taskId = taskTable.getValueAt(selectedRow, 0).toString(); // Assuming the ID is in the first column
-                    Task selectedTask = taskList.getTaskById(taskId); // Assuming getTaskById method exists
-                    if (selectedTask != null) {
-                        new TaskDetailGUI(selectedTask).setVisible(true);
-                    } else {
-                        JOptionPane.showMessageDialog(BrowseAllTasksGUI.this, "Task not found.", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(BrowseAllTasksGUI.this, "Please select a task first.", "No Task Selected", JOptionPane.WARNING_MESSAGE);
-                }
+                editTask();
             }
         });
 
@@ -92,44 +80,13 @@ public class BrowseAllTasksGUI extends JFrame {
         toggleCompleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int selectedRow = taskTable.getSelectedRow();
-                if (selectedRow >= 0) {
-                    String taskId = taskTable.getValueAt(selectedRow, 0).toString(); // Assuming the ID is in the first column
-                    Task selectedTask = taskList.getTaskById(taskId); // Assuming getTaskById method exists
-                    if (selectedTask != null) {
-                        selectedTask.toggleStatus(); // Call the toggleStatus method on the task
-                        // Optionally, update the table row to reflect the new status
-                        tableModel.setValueAt(selectedTask.getStatus(), selectedRow, 6); // Assuming you know the column index of the status
-                    } else {
-                        JOptionPane.showMessageDialog(BrowseAllTasksGUI.this, "Task not found.", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(BrowseAllTasksGUI.this, "Please select a task first.", "No Task Selected", JOptionPane.WARNING_MESSAGE);
-                }
+                toggleTaskStatus();
             }
         });
         deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int selectedRow = taskTable.getSelectedRow();
-                if (selectedRow >= 0) {
-                    // Confirm before deleting
-                    int confirm = JOptionPane.showConfirmDialog(
-                            BrowseAllTasksGUI.this,
-                            "Are you sure you want to delete this task?",
-                            "Confirm Deletion",
-                            JOptionPane.YES_NO_OPTION
-                    );
-
-                    if (confirm == JOptionPane.YES_OPTION) {
-                        String taskId = taskTable.getValueAt(selectedRow, 0).toString(); // Assuming the ID is in the first column
-                        Task deleteTask = taskList.getTaskById(taskId);
-                        taskList.removeTask(deleteTask);
-                        tableModel.removeRow(selectedRow); // Remove the row from the table model
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(BrowseAllTasksGUI.this, "Please select a task first.", "No Task Selected", JOptionPane.WARNING_MESSAGE);
-                }
+                deleteTask();
             }
         });
 
@@ -137,7 +94,8 @@ public class BrowseAllTasksGUI extends JFrame {
         backButton.addActionListener(e -> dispose());
     }
 
-    private void populateTableWithTasks() {
+    // helper methods
+    private void showAllTasks() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         for (Task task : taskList.getTasks()) {
             Object[] row = new Object[]{
@@ -153,4 +111,76 @@ public class BrowseAllTasksGUI extends JFrame {
         }
     }
 
+    private void updateTableRow(int row) {
+        Task task = taskList.getTaskById(taskTable.getValueAt(row, 0).toString());
+        if (task != null) {
+            tableModel.setValueAt(task.getTaskID(), row, 0);
+            tableModel.setValueAt(task.getTitle(), row, 1);
+            tableModel.setValueAt(task.getDescription(), row, 2);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            tableModel.setValueAt(dateFormat.format(task.getDueDate()), row, 3);
+            tableModel.setValueAt(task.getPriority(), row, 4);
+            tableModel.setValueAt(task.getCategory().getName(), row, 5);
+            tableModel.setValueAt(task.getStatus(), row, 6);
+        }
+    }
+
+    private void editTask() {
+        int selectedRow = taskTable.getSelectedRow();
+        if (selectedRow >= 0) {
+            String taskId = taskTable.getValueAt(selectedRow, 0).toString();
+            Task selectedTask = taskList.getTaskById(taskId);
+            if (selectedTask != null) {
+                TaskDetailGUI detailGUI = new TaskDetailGUI(selectedTask);
+                detailGUI.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosed(java.awt.event.WindowEvent windowEvent) {
+                        SwingUtilities.invokeLater(() -> updateTableRow(selectedRow));
+                    }
+                });
+                detailGUI.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(BrowseAllTasksGUI.this, "Task not found.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(BrowseAllTasksGUI.this, "Please select a task first.", "No Task Selected", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    private void toggleTaskStatus() {
+        int selectedRow = taskTable.getSelectedRow();
+        if (selectedRow >= 0) {
+            String taskId = taskTable.getValueAt(selectedRow, 0).toString();
+            Task selectedTask = taskList.getTaskById(taskId);
+            if (selectedTask != null) {
+                selectedTask.toggleStatus();
+                tableModel.setValueAt(selectedTask.getStatus(), selectedRow, 6);
+            } else {
+                JOptionPane.showMessageDialog(BrowseAllTasksGUI.this, "Task not found.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(BrowseAllTasksGUI.this, "Please select a task first.", "No Task Selected", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    private void deleteTask() {
+        int selectedRow = taskTable.getSelectedRow();
+        if (selectedRow >= 0) {
+            int confirm = JOptionPane.showConfirmDialog(
+                    BrowseAllTasksGUI.this,
+                    "Are you sure you want to delete this task?",
+                    "Confirm Deletion",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                String taskId = taskTable.getValueAt(selectedRow, 0).toString();
+                Task deleteTask = taskList.getTaskById(taskId);
+                taskList.removeTask(deleteTask);
+                tableModel.removeRow(selectedRow);
+            }
+        } else {
+            JOptionPane.showMessageDialog(BrowseAllTasksGUI.this, "Please select a task first.", "No Task Selected", JOptionPane.WARNING_MESSAGE);
+        }
+    }
 }

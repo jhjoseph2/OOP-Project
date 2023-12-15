@@ -29,14 +29,14 @@ public class MainGUI extends JFrame {
         addNewTaskButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                onAddNewTask();
+                addNewTask();
             }
         });
 
         browseAllTasksButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                onBrowseAllTasks();
+                showBrowseGUI();
             }
         });
 
@@ -50,14 +50,12 @@ public class MainGUI extends JFrame {
         add(browseAllTasksButton, gbc);
     }
 
-    private void onAddNewTask() {
-        // Switch to AddNewTaskGUI
+    private void addNewTask() {
         AddNewTaskGUI addNewTaskGUI = new AddNewTaskGUI(taskList);
         addNewTaskGUI.setVisible(true);
     }
 
-    private void onBrowseAllTasks() {
-        // Switch to BrowseAllTasksGUI
+    private void showBrowseGUI() {
         BrowseAllTasksGUI browseAllTasksGUI = new BrowseAllTasksGUI(taskList);
         browseAllTasksGUI.setVisible(true);
     }
