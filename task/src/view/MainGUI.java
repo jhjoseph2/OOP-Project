@@ -36,7 +36,7 @@ public class MainGUI extends JFrame {
         browseAllTasksButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                onBrowseAllTasks();
+                showBrowseGUI();
             }
         });
 
@@ -56,7 +56,7 @@ public class MainGUI extends JFrame {
         addNewTaskGUI.setVisible(true);
     }
 
-    private void onBrowseAllTasks() {
+    private void showBrowseGUI() {
         // Switch to BrowseAllTasksGUI
         BrowseAllTasksGUI browseAllTasksGUI = new BrowseAllTasksGUI(taskList);
         browseAllTasksGUI.setVisible(true);
