@@ -29,7 +29,7 @@ public class MainGUI extends JFrame {
         addNewTaskButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                onAddNewTask();
+                addNewTask();
             }
         });
 
@@ -50,7 +50,7 @@ public class MainGUI extends JFrame {
         add(browseAllTasksButton, gbc);
     }
 
-    private void onAddNewTask() {
+    private void addNewTask() {
         AddNewTaskGUI addNewTaskGUI = new AddNewTaskGUI(taskList);
         addNewTaskGUI.setVisible(true);
     }
