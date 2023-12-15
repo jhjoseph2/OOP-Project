@@ -66,7 +66,6 @@ public class TaskDetailGUI extends JFrame {
         return rowPanel;
     }
     private void onSaveTask(ActionEvent e) {
-        // Validate and update the task details
         String title = titleField.getText();
         String description = descriptionArea.getText();
         String dueDateString = dueDateField.getText();
@@ -80,8 +79,6 @@ public class TaskDetailGUI extends JFrame {
             task.setDueDate(dueDate);
             task.setPriority(priority);
             task.setCategory(category);
-
-            // Notify the user that the task was updated
             JOptionPane.showMessageDialog(this, "Task updated successfully.", "Task Updated", JOptionPane.INFORMATION_MESSAGE);
         } catch (ParseException parseException) {
             JOptionPane.showMessageDialog(this, "Invalid date format. Please use yyyy-MM-dd.", "Error", JOptionPane.ERROR_MESSAGE);

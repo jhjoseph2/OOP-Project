@@ -41,7 +41,7 @@ public class AddNewTaskGUI extends JFrame {
         descriptionArea = new JTextArea(5, 20);
         dueDateField = new JTextField(10);
         priorityComboBox = new JComboBox<>(new String[]{"High", "Medium", "Low"});
-        categoryComboBox = new JComboBox<>(); // This should be populated with actual categories
+        categoryComboBox = new JComboBox<>();
         backButton = new JButton("Back");
         for(Category category: categoryList.getCategories()){
             categoryComboBox.addItem(category);
