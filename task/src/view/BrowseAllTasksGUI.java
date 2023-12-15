@@ -1,5 +1,7 @@
 package view;
 
+import model.Category;
+import model.CategoryList;
 import model.Task;
 import model.TaskList;
 
@@ -24,7 +26,8 @@ public class BrowseAllTasksGUI extends JFrame {
     private TaskList taskList;
     private DefaultTableModel tableModel;
 
-
+    private JTextField deleteCategoryField; // Field to input the category name to be deleted
+    private JButton deleteCategoryButton;
     public BrowseAllTasksGUI(TaskList taskList) {
         this.taskList = taskList;
         this.taskList.getTasks().sort((a, b) -> {
@@ -49,6 +52,8 @@ public class BrowseAllTasksGUI extends JFrame {
         backButton = new JButton("Back");
         toggleCompleteButton = new JButton("Toggle Complete");
         deleteButton = new JButton("Delete");
+        deleteCategoryField = new JTextField(20);
+        deleteCategoryButton = new JButton("Delete Category");
         // Table setup
         String[] columnNames = {"ID", "Title", "Description", "Due Date", "Priority", "Category", "Status"};
         tableModel = new DefaultTableModel(columnNames, 0);
@@ -62,10 +67,14 @@ public class BrowseAllTasksGUI extends JFrame {
         buttonPanel.add(deleteButton);
         buttonPanel.add(backButton);
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
+        JPanel deleteCategoryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        deleteCategoryPanel.add(new JLabel("Delete Category:"));
+        deleteCategoryPanel.add(deleteCategoryField);
+        deleteCategoryPanel.add(deleteCategoryButton);
         // Set up layout and add components
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
         add(new JScrollPane(taskTable));
+        add(deleteCategoryPanel);
         add(buttonPanel);
 
         // Action listener for the select button
@@ -89,11 +98,26 @@ public class BrowseAllTasksGUI extends JFrame {
                 deleteTask();
             }
         });
-
+        deleteCategoryButton.addActionListener(this::onDeleteCategory);
         // Action listener for the back button
         backButton.addActionListener(e -> dispose());
     }
+    private void onDeleteCategory(ActionEvent e) {
+        String categoryName = deleteCategoryField.getText();
+        if (categoryName.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter a category name.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
+        CategoryList categoryList = CategoryList.getInstance();
+        boolean deleted = categoryList.deleteCategory(categoryName);
+        if (deleted) {
+            JOptionPane.showMessageDialog(this, "Category deleted successfully.", "Category Deleted", JOptionPane.INFORMATION_MESSAGE);
+
+        } else {
+            JOptionPane.showMessageDialog(this, "Category deleted unsuccessfully", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
     // helper methods
     private void showAllTasks() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");

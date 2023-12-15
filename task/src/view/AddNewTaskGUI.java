@@ -145,13 +145,13 @@ public class AddNewTaskGUI extends JFrame {
         String dueDateString = dueDateField.getText();
         String priority = (String) priorityComboBox.getSelectedItem();
         Category category = (Category) categoryComboBox.getSelectedItem();
-        if(category != null){
-            categoryList.setSet(category.getName());
-        }
+
         // Parse the due date
         Date dueDate;
         try {
-            dueDate = new SimpleDateFormat("yyyy-MM-dd").parse(dueDateString);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            dateFormat.setLenient(false); // Set the SimpleDateFormat to non-lenient
+            dueDate = dateFormat.parse(dueDateString);
 
             // Check if the due date is later than today
             Date today = new Date();
@@ -167,7 +167,7 @@ public class AddNewTaskGUI extends JFrame {
         }
 
         // Create a new Task object
-        Task newTask = new Task(title, description, dueDate, priority, category.getName());
+        Task newTask = new Task(title, description, dueDate, priority, category != null ? category.getName() : "");
 
         // Add the new task to the task list
         taskList.addTask(newTask);
@@ -178,6 +178,7 @@ public class AddNewTaskGUI extends JFrame {
         // Inform the user that the task was saved
         JOptionPane.showMessageDialog(this, "Task saved successfully.", "Task Saved", JOptionPane.INFORMATION_MESSAGE);
     }
+
 
 
     private void clearFields() {
