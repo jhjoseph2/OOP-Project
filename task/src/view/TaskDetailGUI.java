@@ -20,6 +20,9 @@ public class TaskDetailGUI extends JFrame {
     private JButton saveButton;
     private JButton closeButton;
 
+    private JTextField deleteCategoryField; // Field to input the category name to be deleted
+    private JButton deleteCategoryButton;
+
     private Task task;
 
     public TaskDetailGUI(Task task) {
@@ -39,25 +42,54 @@ public class TaskDetailGUI extends JFrame {
         categoryComboBox = new JComboBox<>();
         CategoryList.getInstance().getCategories().forEach(categoryComboBox::addItem);
         categoryComboBox.setSelectedItem(task.getCategory());
-
+        deleteCategoryField = new JTextField(20);
+        deleteCategoryButton = new JButton("Delete Category");
         saveButton = new JButton("Save");
         closeButton = new JButton("Close");
 
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
-
+        JPanel deleteCategoryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        deleteCategoryPanel.add(new JLabel("Delete Category:"));
+        deleteCategoryPanel.add(deleteCategoryField);
+        deleteCategoryPanel.add(deleteCategoryButton);
         add(createRow("Title:", titleField));
         add(createRow("Description:", new JScrollPane(descriptionArea)));
         add(createRow("Due Date:", dueDateField));
         add(createRow("Priority:", priorityComboBox));
         add(createRow("Category:", categoryComboBox));
-
+        add(deleteCategoryPanel);
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonsPanel.add(saveButton);
         buttonsPanel.add(closeButton);
         add(buttonsPanel);
-
-        saveButton.addActionListener(this::saveTask);
+      
+        deleteCategoryButton.addActionListener(this::onDeleteCategory);
+        saveButton.addActionListener(this::onSaveTask);
         closeButton.addActionListener(e -> dispose());
+    }
+    private void onDeleteCategory(ActionEvent e) {
+        Category category = (Category) categoryComboBox.getSelectedItem();
+        String categoryName = deleteCategoryField.getText();
+        if (categoryName.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter a category name.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if(categoryName.equals(category.getName())){
+            JOptionPane.showMessageDialog(this, "Category deleted unsuccessfully", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        CategoryList categoryList = CategoryList.getInstance();
+        boolean deleted = categoryList.deleteCategory(categoryName);
+        if (deleted) {
+            JOptionPane.showMessageDialog(this, "Category deleted successfully.", "Category Deleted", JOptionPane.INFORMATION_MESSAGE);
+            // Update the categoryComboBox
+            categoryComboBox.removeAllItems();
+            categoryList.getCategories().forEach(categoryComboBox::addItem);
+        } else {
+            JOptionPane.showMessageDialog(this, "Category deleted unsuccessfully", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
     private JPanel createRow(String labelText, JComponent component) {
         JPanel rowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -71,7 +103,8 @@ public class TaskDetailGUI extends JFrame {
         String dueDateString = dueDateField.getText();
         String priority = (String) priorityComboBox.getSelectedItem();
         Category category = (Category) categoryComboBox.getSelectedItem();
-
+        assert category != null;
+        category.updateCategory(category.getName());
         try {
             Date dueDate = new SimpleDateFormat("yyyy-MM-dd").parse(dueDateString);
             task.setTitle(title);

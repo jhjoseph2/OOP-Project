@@ -22,9 +22,10 @@ public class Category {
         return name;
     }
 
-    public void setName(String name) {
+    public void updateCategory(String name) {
         this.name = name;
     }
+
 
     @Override
     public String toString() {

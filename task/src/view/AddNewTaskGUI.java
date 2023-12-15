@@ -26,6 +26,9 @@ public class AddNewTaskGUI extends JFrame {
 
     private TaskList taskList;
 
+    private JTextField newCategoryField; // Field to input the new category name
+    private JButton createCategoryButton;
+
     public AddNewTaskGUI(TaskList taskList) {
         this.taskList = taskList;
         setTitle("Add New Task");
@@ -43,12 +46,17 @@ public class AddNewTaskGUI extends JFrame {
         priorityComboBox = new JComboBox<>(new String[]{"High", "Medium", "Low"});
         categoryComboBox = new JComboBox<>();
         backButton = new JButton("Back");
+        newCategoryField = new JTextField(20);
+        createCategoryButton = new JButton("Create Category");
         for(Category category: categoryList.getCategories()){
             categoryComboBox.addItem(category);
         }
 
         getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
-
+        JPanel newCategoryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        newCategoryPanel.add(new JLabel("New Category:"));
+        newCategoryPanel.add(newCategoryField);
+        newCategoryPanel.add(createCategoryButton);
         // Title
         JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         titlePanel.add(new JLabel("Title:"));
@@ -78,7 +86,7 @@ public class AddNewTaskGUI extends JFrame {
         categoryPanel.add(new JLabel("Category:"));
         categoryPanel.add(categoryComboBox);
         getContentPane().add(categoryPanel);
-
+        getContentPane().add(newCategoryPanel);
         // Back button
         JPanel backPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         backPanel.add(backButton);
@@ -98,9 +106,36 @@ public class AddNewTaskGUI extends JFrame {
                 onSaveTask();
             }
         });
-
+        createCategoryButton.addActionListener(this::onCreateCategory);
         // Add action listener to backButton
         backButton.addActionListener(e -> dispose());
+    }
+    private void onCreateCategory(ActionEvent e) {
+        String categoryName = newCategoryField.getText().trim();
+        if (categoryName.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter a category name.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Check if category already exists
+//        if (categoryList.containsCategory(categoryName)) {
+//            JOptionPane.showMessageDialog(this, "Category already exists.", "Error", JOptionPane.ERROR_MESSAGE);
+//            return;
+//        }
+
+        // Create and add the new category
+        boolean created = CategoryList.createCategory(categoryName);
+        if(!created){
+            JOptionPane.showMessageDialog(this, "Category created failed", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        categoryComboBox.addItem(categoryList.getCategoryByName(categoryName).get());
+
+        // Clear the new category field
+        newCategoryField.setText("");
+
+        // Notify the user
+        JOptionPane.showMessageDialog(this, "Category created successfully.", "Category Created", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void onSaveTask() {
@@ -110,7 +145,9 @@ public class AddNewTaskGUI extends JFrame {
         String dueDateString = dueDateField.getText();
         String priority = (String) priorityComboBox.getSelectedItem();
         Category category = (Category) categoryComboBox.getSelectedItem();
-
+        if(category != null){
+            categoryList.setSet(category.getName());
+        }
         // Parse the due date
         Date dueDate;
         try {
