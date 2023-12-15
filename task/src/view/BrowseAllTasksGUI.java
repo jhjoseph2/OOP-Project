@@ -27,7 +27,7 @@ public class BrowseAllTasksGUI extends JFrame {
 
     public BrowseAllTasksGUI(TaskList taskList) {
         this.taskList = taskList;
-        Collections.sort(this.taskList.getTasks(), (a, b) -> {
+        this.taskList.getTasks().sort((a, b) -> {
             if (a.getDueDate().before(b.getDueDate())) {
                 return -1;
             } else if (a.getDueDate().after(b.getDueDate())) {
@@ -56,7 +56,7 @@ public class BrowseAllTasksGUI extends JFrame {
         showAllTasks();
 
         // Search Panel
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 3, 10, 0)); // Changed to GridLayout
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 3, 10, 0));
         buttonPanel.add(selectTaskButton);
         buttonPanel.add(toggleCompleteButton);
         buttonPanel.add(deleteButton);
@@ -128,8 +128,8 @@ public class BrowseAllTasksGUI extends JFrame {
     private void editTask() {
         int selectedRow = taskTable.getSelectedRow();
         if (selectedRow >= 0) {
-            String taskId = taskTable.getValueAt(selectedRow, 0).toString(); // Assuming the ID is in the first column
-            Task selectedTask = taskList.getTaskById(taskId); // Assuming getTaskById method exists
+            String taskId = taskTable.getValueAt(selectedRow, 0).toString();
+            Task selectedTask = taskList.getTaskById(taskId);
             if (selectedTask != null) {
                 TaskDetailGUI detailGUI = new TaskDetailGUI(selectedTask);
                 detailGUI.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -150,12 +150,11 @@ public class BrowseAllTasksGUI extends JFrame {
     private void toggleTaskStatus() {
         int selectedRow = taskTable.getSelectedRow();
         if (selectedRow >= 0) {
-            String taskId = taskTable.getValueAt(selectedRow, 0).toString(); // Assuming the ID is in the first column
-            Task selectedTask = taskList.getTaskById(taskId); // Assuming getTaskById method exists
+            String taskId = taskTable.getValueAt(selectedRow, 0).toString();
+            Task selectedTask = taskList.getTaskById(taskId);
             if (selectedTask != null) {
-                selectedTask.toggleStatus(); // Call the toggleStatus method on the task
-                // Optionally, update the table row to reflect the new status
-                tableModel.setValueAt(selectedTask.getStatus(), selectedRow, 6); // Assuming you know the column index of the status
+                selectedTask.toggleStatus();
+                tableModel.setValueAt(selectedTask.getStatus(), selectedRow, 6);
             } else {
                 JOptionPane.showMessageDialog(BrowseAllTasksGUI.this, "Task not found.", "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -167,7 +166,6 @@ public class BrowseAllTasksGUI extends JFrame {
     private void deleteTask() {
         int selectedRow = taskTable.getSelectedRow();
         if (selectedRow >= 0) {
-            // Confirm before deleting
             int confirm = JOptionPane.showConfirmDialog(
                     BrowseAllTasksGUI.this,
                     "Are you sure you want to delete this task?",
@@ -176,10 +174,10 @@ public class BrowseAllTasksGUI extends JFrame {
             );
 
             if (confirm == JOptionPane.YES_OPTION) {
-                String taskId = taskTable.getValueAt(selectedRow, 0).toString(); // Assuming the ID is in the first column
+                String taskId = taskTable.getValueAt(selectedRow, 0).toString();
                 Task deleteTask = taskList.getTaskById(taskId);
                 taskList.removeTask(deleteTask);
-                tableModel.removeRow(selectedRow); // Remove the row from the table model
+                tableModel.removeRow(selectedRow);
             }
         } else {
             JOptionPane.showMessageDialog(BrowseAllTasksGUI.this, "Please select a task first.", "No Task Selected", JOptionPane.WARNING_MESSAGE);

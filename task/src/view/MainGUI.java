@@ -51,13 +51,11 @@ public class MainGUI extends JFrame {
     }
 
     private void onAddNewTask() {
-        // Switch to AddNewTaskGUI
         AddNewTaskGUI addNewTaskGUI = new AddNewTaskGUI(taskList);
         addNewTaskGUI.setVisible(true);
     }
 
     private void showBrowseGUI() {
-        // Switch to BrowseAllTasksGUI
         BrowseAllTasksGUI browseAllTasksGUI = new BrowseAllTasksGUI(taskList);
         browseAllTasksGUI.setVisible(true);
     }
