@@ -29,7 +29,8 @@ public class BrowseAllTasksGUI extends JFrame {
     private JComboBox<String> priorityFilterComboBox;
     private JButton filterButton; // Button to apply the filters
 
-    private JTextField deleteCategoryField; // Field to input the category name to be deleted
+    private JComboBox<String> deleteCategoryComboBox;
+
     private JButton deleteCategoryButton;
     public BrowseAllTasksGUI(TaskList taskList) {
         this.taskList = taskList;
@@ -56,7 +57,7 @@ public class BrowseAllTasksGUI extends JFrame {
         backButton = new JButton("Back");
         toggleCompleteButton = new JButton("Toggle Complete");
         deleteButton = new JButton("Delete");
-        deleteCategoryField = new JTextField(20);
+        deleteCategoryComboBox = new JComboBox<>();
         deleteCategoryButton = new JButton("Delete Category");
         // Table setup
         String[] columnNames = {"ID", "Title", "Description", "Due Date", "Priority", "Category", "Status"};
@@ -72,9 +73,14 @@ public class BrowseAllTasksGUI extends JFrame {
         buttonPanel.add(backButton);
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         JPanel deleteCategoryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        deleteCategoryComboBox.addItem("Select a category");
+        for(Category category: CategoryList.getInstance().getCategories()){
+            deleteCategoryComboBox.addItem(category.getName());
+        }
         deleteCategoryPanel.add(new JLabel("Delete Category:"));
-        deleteCategoryPanel.add(deleteCategoryField);
+        deleteCategoryPanel.add(deleteCategoryComboBox);
         deleteCategoryPanel.add(deleteCategoryButton);
+
         // Set up layout and add components
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
         add(new JScrollPane(taskTable));
@@ -102,14 +108,15 @@ public class BrowseAllTasksGUI extends JFrame {
                 deleteTask();
             }
         });
+
         deleteCategoryButton.addActionListener(this::onDeleteCategory);
         // Action listener for the back button
         backButton.addActionListener(e -> dispose());
     }
     private void onDeleteCategory(ActionEvent e) {
-        String categoryName = deleteCategoryField.getText();
-        if (categoryName.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please enter a category name.", "Error", JOptionPane.ERROR_MESSAGE);
+        String categoryName = (String) deleteCategoryComboBox.getSelectedItem();
+        if (categoryName.equals("Select a category")) {
+            JOptionPane.showMessageDialog(this, "Please select a category to delete.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -117,7 +124,7 @@ public class BrowseAllTasksGUI extends JFrame {
         boolean deleted = categoryList.deleteCategory(categoryName);
         if (deleted) {
             JOptionPane.showMessageDialog(this, "Category deleted successfully.", "Category Deleted", JOptionPane.INFORMATION_MESSAGE);
-
+            deleteCategoryComboBox.removeItem(categoryName);
         } else {
             JOptionPane.showMessageDialog(this, "Category deleted unsuccessfully", "Error", JOptionPane.ERROR_MESSAGE);
         }
