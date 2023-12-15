@@ -56,7 +56,7 @@ public class TaskDetailGUI extends JFrame {
         buttonsPanel.add(closeButton);
         add(buttonsPanel);
 
-        saveButton.addActionListener(this::onSaveTask);
+        saveButton.addActionListener(this::saveTask);
         closeButton.addActionListener(e -> dispose());
     }
     private JPanel createRow(String labelText, JComponent component) {
@@ -65,7 +65,7 @@ public class TaskDetailGUI extends JFrame {
         rowPanel.add(component);
         return rowPanel;
     }
-    private void onSaveTask(ActionEvent e) {
+    private void saveTask(ActionEvent e) {
         String title = titleField.getText();
         String description = descriptionArea.getText();
         String dueDateString = dueDateField.getText();
