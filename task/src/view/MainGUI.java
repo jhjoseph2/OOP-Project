@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 public class MainGUI extends JFrame {
     private JButton addNewTaskButton;
     private JButton browseAllTasksButton;

@@ -26,7 +26,7 @@ public class AddNewTaskGUI extends JFrame {
 
     private TaskList taskList;
 
-    private JTextField newCategoryField; // Field to input the new category name
+    private JTextField newCategoryField;
     private JButton createCategoryButton;
 
     public AddNewTaskGUI(TaskList taskList) {
@@ -101,14 +101,14 @@ public class AddNewTaskGUI extends JFrame {
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                onSaveTask();
+                saveTask();
             }
         });
 
-        createCategoryButton.addActionListener(this::onCreateCategory);
+        createCategoryButton.addActionListener(this::addCategory);
     }
 
-    private void onCreateCategory(ActionEvent e) {
+    private void addCategory(ActionEvent e) {
         String categoryName = newCategoryField.getText().trim();
         if (categoryName.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please enter a category name.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -121,7 +121,6 @@ public class AddNewTaskGUI extends JFrame {
 //            return;
 //        }
 
-        // Create and add the new category
         boolean created = CategoryList.createCategory(categoryName);
         if (!created) {
             JOptionPane.showMessageDialog(this, "Category created failed", "Error", JOptionPane.ERROR_MESSAGE);
@@ -129,29 +128,23 @@ public class AddNewTaskGUI extends JFrame {
         }
         categoryComboBox.addItem(categoryList.getCategoryByName(categoryName).get());
 
-        // Clear the new category field
         newCategoryField.setText("");
 
-        // Notify the user
         JOptionPane.showMessageDialog(this, "Category created successfully.", "Category Created", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    private void onSaveTask() {
-        // Validate and gather input from fields
+    private void saveTask() {
         String title = titleField.getText();
         String description = descriptionArea.getText();
         String dueDateString = dueDateField.getText();
         String priority = (String) priorityComboBox.getSelectedItem();
         Category category = (Category) categoryComboBox.getSelectedItem();
 
-        // Parse the due date
         Date dueDate;
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            dateFormat.setLenient(false); // Set the SimpleDateFormat to non-lenient
+            dateFormat.setLenient(false);
             dueDate = dateFormat.parse(dueDateString);
-
-            // Check if the due date is later than today
             Date today = new Date();
             if (dueDate.before(today)) {
                 JOptionPane.showMessageDialog(this, "The due date must be later than today.",
@@ -164,16 +157,13 @@ public class AddNewTaskGUI extends JFrame {
             return;
         }
 
-        // Create a new Task object
         Task newTask = new Task(title, description, dueDate, priority, category != null ? category.getName() : "");
 
-        // Add the new task to the task list
         taskList.addTask(newTask);
 
         clearFields();
         dispose();
 
-        // Inform the user that the task was saved
         JOptionPane.showMessageDialog(this, "Task saved successfully.", "Task Saved", JOptionPane.INFORMATION_MESSAGE);
     }
 

@@ -4,6 +4,7 @@ import model.Task;
 import model.CategoryList;
 import model.Category;
 import model.TaskList;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -56,12 +57,14 @@ public class TaskDetailGUI extends JFrame {
         saveButton.addActionListener(this::saveTask);
         closeButton.addActionListener(e -> dispose());
     }
+
     private JPanel createRow(String labelText, JComponent component) {
         JPanel rowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         rowPanel.add(new JLabel(labelText));
         rowPanel.add(component);
         return rowPanel;
     }
+
     private void saveTask(ActionEvent e) {
         String title = titleField.getText();
         String description = descriptionArea.getText();

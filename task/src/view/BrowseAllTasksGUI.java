@@ -17,21 +17,20 @@ import java.util.stream.Collectors;
 
 public class BrowseAllTasksGUI extends JFrame {
     private JTable taskTable;
-    private JTextField searchTextField;
     private JButton selectTaskButton;
     private JButton backButton;
     private JButton toggleCompleteButton;
-
     private JButton deleteButton;
     private TaskList taskList;
     private DefaultTableModel tableModel;
     private JComboBox<String> categoryFilterComboBox;
     private JComboBox<String> priorityFilterComboBox;
-    private JButton filterButton; // Button to apply the filters
+    private JButton filterButton;
 
     private JComboBox<String> deleteCategoryComboBox;
 
     private JButton deleteCategoryButton;
+
     public BrowseAllTasksGUI(TaskList taskList) {
         this.taskList = taskList;
         this.taskList.getTasks().sort((a, b) -> {
@@ -59,13 +58,12 @@ public class BrowseAllTasksGUI extends JFrame {
         deleteButton = new JButton("Delete");
         deleteCategoryComboBox = new JComboBox<>();
         deleteCategoryButton = new JButton("Delete Category");
-        // Table setup
+
         String[] columnNames = {"ID", "Title", "Description", "Due Date", "Priority", "Category", "Status"};
         tableModel = new DefaultTableModel(columnNames, 0);
         taskTable.setModel(tableModel);
         showAllTasks();
 
-        // Search Panel
         JPanel buttonPanel = new JPanel(new GridLayout(1, 3, 10, 0));
         buttonPanel.add(selectTaskButton);
         buttonPanel.add(toggleCompleteButton);
@@ -74,14 +72,13 @@ public class BrowseAllTasksGUI extends JFrame {
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         JPanel deleteCategoryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         deleteCategoryComboBox.addItem("Select a category");
-        for(Category category: CategoryList.getInstance().getCategories()){
+        for (Category category : CategoryList.getInstance().getCategories()) {
             deleteCategoryComboBox.addItem(category.getName());
         }
         deleteCategoryPanel.add(new JLabel("Delete Category:"));
         deleteCategoryPanel.add(deleteCategoryComboBox);
         deleteCategoryPanel.add(deleteCategoryButton);
 
-        // Set up layout and add components
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
         add(new JScrollPane(taskTable));
         add(deleteCategoryPanel);
@@ -113,6 +110,7 @@ public class BrowseAllTasksGUI extends JFrame {
         // Action listener for the back button
         backButton.addActionListener(e -> dispose());
     }
+
     private void onDeleteCategory(ActionEvent e) {
         String categoryName = (String) deleteCategoryComboBox.getSelectedItem();
         if (categoryName.equals("Select a category")) {
@@ -129,6 +127,7 @@ public class BrowseAllTasksGUI extends JFrame {
             JOptionPane.showMessageDialog(this, "Category deleted unsuccessfully", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
     // helper methods
     private void showAllTasks() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -220,16 +219,11 @@ public class BrowseAllTasksGUI extends JFrame {
     }
 
     private void initFilterComponents() {
-        // Radio buttons for choosing the filter type
         JRadioButton categoryRadioButton = new JRadioButton("Category", true);
         JRadioButton priorityRadioButton = new JRadioButton("Priority");
-
-        // Group the radio buttons.
         ButtonGroup group = new ButtonGroup();
         group.add(categoryRadioButton);
         group.add(priorityRadioButton);
-
-        // Combo boxes initialization.
         categoryFilterComboBox = new JComboBox<>();
         categoryFilterComboBox.addItem("All Categories");
         CategoryList.getInstance().getCategories().forEach(category ->
@@ -237,33 +231,25 @@ public class BrowseAllTasksGUI extends JFrame {
         );
 
         priorityFilterComboBox = new JComboBox<>(new String[]{"All Priorities", "High", "Medium", "Low"});
-        priorityFilterComboBox.setEnabled(false); // Disabled by default
-
-        // Add action listeners to the radio buttons to enable/disable combo boxes
+        priorityFilterComboBox.setEnabled(false);
         categoryRadioButton.addActionListener(e -> toggleFilterOptions(true));
         priorityRadioButton.addActionListener(e -> toggleFilterOptions(false));
 
         filterButton = new JButton("Apply Filters");
         filterButton.addActionListener(e -> applyFilters());
 
-        // Filter options panel
         JPanel filterOptionsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         filterOptionsPanel.add(categoryRadioButton);
         filterOptionsPanel.add(priorityRadioButton);
         filterOptionsPanel.add(new JLabel("Filter by:"));
         filterOptionsPanel.add(categoryFilterComboBox);
         filterOptionsPanel.add(priorityFilterComboBox);
-
-        // Apply button panel
         JPanel applyButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         applyButtonPanel.add(filterButton);
-
-        // Main filter panel that combines filter options and apply button
         JPanel filterPanel = new JPanel(new BorderLayout());
         filterPanel.add(filterOptionsPanel, BorderLayout.CENTER);
         filterPanel.add(applyButtonPanel, BorderLayout.EAST);
-
-        add(filterPanel, 0); // Add the filter panel at the top of the GUI
+        add(filterPanel, 0);
     }
 
     private void toggleFilterOptions(boolean isCategorySelected) {
@@ -275,23 +261,16 @@ public class BrowseAllTasksGUI extends JFrame {
         String selectedCategoryName = categoryFilterComboBox.isEnabled() ? (String) categoryFilterComboBox.getSelectedItem() : "All Categories";
         String selectedPriority = priorityFilterComboBox.isEnabled() ? (String) priorityFilterComboBox.getSelectedItem() : "All Priorities";
 
-        List<Task> filteredTasks = new ArrayList<>();
+        List<Task> filteredTasks;
 
         if (!"All Categories".equals(selectedCategoryName)) {
-            // A specific category name is selected
             filteredTasks = taskList.getTasksByCategory(selectedCategoryName);
         } else if (!"All Priorities".equals(selectedPriority)) {
-            // A specific priority is selected
             filteredTasks = taskList.getTasksByPriority(selectedPriority);
         } else {
-            // Neither specific category nor priority is selected
             filteredTasks = taskList.getTasks();
         }
-
-        // Clear the existing rows in the table
         tableModel.setRowCount(0);
-
-        // Add the filtered tasks to the table
         updateTaskTable(filteredTasks);
     }
 
