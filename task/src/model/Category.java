@@ -22,7 +22,7 @@ public class Category {
         return name;
     }
 
-    public void updateCategory(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
