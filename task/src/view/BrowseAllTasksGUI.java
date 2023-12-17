@@ -51,15 +51,26 @@ public class BrowseAllTasksGUI extends JFrame {
     }
 
     private void initWidgets() {
-//        searchTextField = new JTextField(20);
-        taskTable = new JTable();
+        taskTable = new JTable() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
         selectTaskButton = new JButton("Edit Task");
         backButton = new JButton("Back");
         toggleCompleteButton = new JButton("Toggle Complete");
         deleteButton = new JButton("Delete");
 
         String[] columnNames = {"ID", "Title", "Description", "Due Date", "Priority", "Category", "Status"};
-        tableModel = new DefaultTableModel(columnNames, 0);
+        tableModel = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
         taskTable.setModel(tableModel);
         showAllTasks();
 
