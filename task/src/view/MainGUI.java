@@ -11,6 +11,7 @@ public class MainGUI extends JFrame {
     private JButton addNewTaskButton;
     private JButton browseAllTasksButton;
 
+    private JButton manageCategoryButton;
     private TaskList taskList;
 
     public MainGUI() {
@@ -26,7 +27,14 @@ public class MainGUI extends JFrame {
     private void initWidgets() {
         addNewTaskButton = new JButton("Add New Task");
         browseAllTasksButton = new JButton("Browse All Tasks");
+        manageCategoryButton = new JButton("Manage Category");
 
+        manageCategoryButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showManageGUI();
+            }
+        });
         addNewTaskButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -49,8 +57,12 @@ public class MainGUI extends JFrame {
 
         add(addNewTaskButton, gbc);
         add(browseAllTasksButton, gbc);
+        add(manageCategoryButton, gbc);
     }
-
+    private void showManageGUI(){
+        CategoryGUI categoryGUI = new CategoryGUI();
+        categoryGUI.setVisible(true);
+    }
     private void showAddNewGUI() {
         AddNewTaskGUI addNewTaskGUI = new AddNewTaskGUI(taskList);
         addNewTaskGUI.setVisible(true);
