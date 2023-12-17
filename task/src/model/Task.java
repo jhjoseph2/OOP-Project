@@ -9,7 +9,7 @@ public class Task {
     public enum Status {
         INCOMPLETE, COMPLETE
     }
-    public static int TASK_ID = 1;
+    private static int TASK_ID = 1;
     private int taskID;
     private String title;
     private String description;
@@ -90,6 +90,14 @@ public class Task {
     }
 
     public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public void saveTask(String title, String description, Date dueDate, String priority, Category category){
+        this.title = title;
+        this.description = description;
+        this.dueDate = dueDate;
+        this.priority = priority;
         this.category = category;
     }
 }

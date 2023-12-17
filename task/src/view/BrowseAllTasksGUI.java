@@ -28,9 +28,10 @@ public class BrowseAllTasksGUI extends JFrame {
     private JButton filterButton;
 
     private JComboBox<String> deleteCategoryComboBox;
-
+    private JRadioButton categoryRadioButton;
     private JButton deleteCategoryButton;
 
+    private JRadioButton priorityRadioButton;
     public BrowseAllTasksGUI(TaskList taskList) {
         this.taskList = taskList;
         this.taskList.getTasks().sort((a, b) -> {
@@ -106,12 +107,12 @@ public class BrowseAllTasksGUI extends JFrame {
             }
         });
 
-        deleteCategoryButton.addActionListener(this::onDeleteCategory);
+        deleteCategoryButton.addActionListener(this::deleteCategory);
         // Action listener for the back button
         backButton.addActionListener(e -> dispose());
     }
 
-    private void onDeleteCategory(ActionEvent e) {
+    private void deleteCategory(ActionEvent e) {
         String categoryName = (String) deleteCategoryComboBox.getSelectedItem();
         if (categoryName.equals("Select a category")) {
             JOptionPane.showMessageDialog(this, "Please select a category to delete.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -219,8 +220,8 @@ public class BrowseAllTasksGUI extends JFrame {
     }
 
     private void initFilterComponents() {
-        JRadioButton categoryRadioButton = new JRadioButton("Category", true);
-        JRadioButton priorityRadioButton = new JRadioButton("Priority");
+        categoryRadioButton = new JRadioButton("Category", true);
+        priorityRadioButton = new JRadioButton("Priority");
         ButtonGroup group = new ButtonGroup();
         group.add(categoryRadioButton);
         group.add(priorityRadioButton);

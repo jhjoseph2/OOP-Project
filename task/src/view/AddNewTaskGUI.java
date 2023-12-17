@@ -101,7 +101,7 @@ public class AddNewTaskGUI extends JFrame {
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                saveTask();
+                addTask();
             }
         });
 
@@ -133,7 +133,7 @@ public class AddNewTaskGUI extends JFrame {
         JOptionPane.showMessageDialog(this, "Category created successfully.", "Category Created", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    private void saveTask() {
+    private void addTask() {
         String title = titleField.getText();
         String description = descriptionArea.getText();
         String dueDateString = dueDateField.getText();

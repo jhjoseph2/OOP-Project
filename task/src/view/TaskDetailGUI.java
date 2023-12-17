@@ -72,14 +72,9 @@ public class TaskDetailGUI extends JFrame {
         String priority = (String) priorityComboBox.getSelectedItem();
         Category category = (Category) categoryComboBox.getSelectedItem();
         assert category != null;
-        category.updateCategory(category.getName());
         try {
             Date dueDate = new SimpleDateFormat("yyyy-MM-dd").parse(dueDateString);
-            task.setTitle(title);
-            task.setDescription(description);
-            task.setDueDate(dueDate);
-            task.setPriority(priority);
-            task.setCategory(category);
+            task.saveTask(title, description, dueDate, priority, category);
             JOptionPane.showMessageDialog(this, "Task updated successfully.", "Task Updated", JOptionPane.INFORMATION_MESSAGE);
         } catch (ParseException parseException) {
             JOptionPane.showMessageDialog(this, "Invalid date format. Please use yyyy-MM-dd.", "Error", JOptionPane.ERROR_MESSAGE);

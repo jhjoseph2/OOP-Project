@@ -6,7 +6,6 @@ public class CategoryList {
     private static CategoryList instance = null;
     private List<Category> categories;
 
-    private Map<String, Integer> map;
 
     private CategoryList() {
         this.categories = new ArrayList<>();
@@ -15,24 +14,14 @@ public class CategoryList {
     public static CategoryList getInstance() {
         if (instance == null) {
             instance = new CategoryList();
-            createSet();
             createCategory("Work");
             createCategory("Life");
             createCategory("Study");
         }
         return instance;
     }
-    public static void createSet(){
-        CategoryList cl = getInstance();
-        if(cl.map == null){
-            cl.map = new HashMap<>();
-        }
-    }
 
-    public void setSet(String category) {
-        this.map.put(category, map.getOrDefault(category, 0) + 1);
 
-    }
 
     public static boolean createCategory(String name) {
         CategoryList cl = getInstance();
@@ -49,7 +38,7 @@ public class CategoryList {
     }
 
     public boolean deleteCategory(String name) {
-        if(map.get(name) != null && map.get(name) > 0){
+        if (categories.size() == 1) {
             return false;
         }
         return categories.removeIf(category -> category.getName().equals(name));
